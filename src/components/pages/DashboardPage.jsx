@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
 import {
   TrendingUp,
   TrendingDown,
@@ -69,7 +70,7 @@ const TREND_DATASETS = {
   },
 };
 
-const LIVE_OVERVIEW_API_URL = 'http://localhost:8000/api/overview';
+fetch(`${API_BASE_URL}/api/overview`)
 
 const DashboardPage = ({ lang = 'bn', setActiveTab }) => {
   const [market, setMarket] = useState(() => {

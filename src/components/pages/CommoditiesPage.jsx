@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
 import {
   TrendingUp,
   TrendingDown,
@@ -45,7 +46,7 @@ const INITIAL_COMMODITIES = [
   { id: 24, nameBn: 'গুঁড়া দুধ (ফুল ক্রিম)', nameEn: 'Full Cream Milk Powder', categoryBn: 'মুদি ও তেল', categoryEn: 'Grocery & Oil', price: 820, priceChange: 0, unitBn: 'কেজি', unitEn: 'Kg' },
 ];
 
-const LIVE_COMMODITIES_API_URL = 'http://localhost:8000/api/commodities';
+fetch(`${API_BASE_URL}/api/commodities`)
 
 const CommoditiesPage = ({ lang = 'bn' }) => {
   const [items, setItems] = useState(() => {

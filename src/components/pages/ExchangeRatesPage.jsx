@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
 import {
   TrendingUp,
   TrendingDown,
@@ -23,7 +24,7 @@ const INITIAL_RATES = [
   { code: 'INR', nameBn: 'ভারতীয় রুপি', nameEn: 'Indian Rupee', flag: '🇮🇳', buy: 1.42, sell: 1.45, priceChange: 0 },
 ];
 
-const LIVE_EXCHANGE_API_URL = 'http://localhost:8000/api/exchange-rates';
+fetch(`${API_BASE_URL}/api/exchange-rates`)
 
 const ExchangeRatesPage = ({ lang = 'bn' }) => {
   const [rates, setRates] = useState(() => {

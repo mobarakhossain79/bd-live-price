@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
 import {
   TrendingUp,
   TrendingDown,
@@ -98,7 +99,7 @@ const OFFICIAL_BAJUS_PRICES = [
 
 const BHORI_IN_GRAMS = 11.664;
 const BHORI_IN_ANA = 16;
-const LIVE_GOLD_API_URL = 'http://localhost:8000/api/gold-prices';
+fetch(`${API_BASE_URL}/api/gold-prices`)
 
 const GoldPage = ({ lang = 'bn' }) => {
   const [prices, setPrices] = useState(() => {
