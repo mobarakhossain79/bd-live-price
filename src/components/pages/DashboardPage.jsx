@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
 import {
   TrendingUp,
   TrendingDown,
@@ -8,6 +7,7 @@ import {
   ShoppingCart,
   ArrowUpRight,
   Layers,
+  Minus,
 } from 'lucide-react';
 import {
   AreaChart,
@@ -18,6 +18,9 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
+const LIVE_OVERVIEW_API_URL = `${API_BASE_URL}/api/overview`;
 
 const INITIAL_OVERVIEW = {
   usd: { price: 122.5, priceChange: 0 },
@@ -70,8 +73,6 @@ const TREND_DATASETS = {
   },
 };
 
-fetch(`${API_BASE_URL}/api/overview`)
-
 const DashboardPage = ({ lang = 'bn', setActiveTab }) => {
   const [market, setMarket] = useState(() => {
     const saved = localStorage.getItem('bd_live_overview_v2');
@@ -94,8 +95,6 @@ const DashboardPage = ({ lang = 'bn', setActiveTab }) => {
   const [activeChart, setActiveChart] = useState('usd');
 
   const syncOverviewData = useCallback(async () => {
-    if (!LIVE_OVERVIEW_API_URL) return;
-
     try {
       const res = await fetch(LIVE_OVERVIEW_API_URL, { cache: 'no-store' });
       if (!res.ok) return;
@@ -147,7 +146,6 @@ const DashboardPage = ({ lang = 'bn', setActiveTab }) => {
   useEffect(() => {
     syncOverviewData();
     const interval = setInterval(syncOverviewData, 15000);
-
     const handleFocus = () => syncOverviewData();
     window.addEventListener('focus', handleFocus);
 
@@ -183,6 +181,7 @@ const DashboardPage = ({ lang = 'bn', setActiveTab }) => {
       price: `৳ ${market.usd.price.toFixed(2)}`,
       priceChange: market.usd.priceChange,
       icon: DollarSign,
+      iconBg: 'bg-blue-50 text-blue-600',
     },
     {
       id: 'gold22k',
@@ -194,6 +193,7 @@ const DashboardPage = ({ lang = 'bn', setActiveTab }) => {
       price: `৳ ${market.gold22k.price.toLocaleString('en-IN')}`,
       priceChange: market.gold22k.priceChange,
       icon: Coins,
+      iconBg: 'bg-amber-50 text-amber-600',
     },
     {
       id: 'rice',
@@ -205,6 +205,7 @@ const DashboardPage = ({ lang = 'bn', setActiveTab }) => {
       price: `৳ ${market.rice.price.toLocaleString('en-IN')}`,
       priceChange: market.rice.priceChange,
       icon: ShoppingCart,
+      iconBg: 'bg-emerald-50 text-emerald-600',
     },
     {
       id: 'onion',
@@ -216,6 +217,7 @@ const DashboardPage = ({ lang = 'bn', setActiveTab }) => {
       price: `৳ ${market.onion.price.toLocaleString('en-IN')}`,
       priceChange: market.onion.priceChange,
       icon: Layers,
+      iconBg: 'bg-indigo-50 text-indigo-600',
     },
   ];
 
@@ -224,8 +226,8 @@ const DashboardPage = ({ lang = 'bn', setActiveTab }) => {
       code: '21K',
       nameBn: '২১ ক্যারেট স্বর্ণ',
       nameEn: '21K Gold',
-      unitBn: 'ভরি',
-      unitEn: 'Bhori',
+      unitBn: 'প্রতি ভরি',
+      unitEn: 'Per Bhori',
       price: `৳ ${market.gold21k.price.toLocaleString('en-IN')}`,
       priceChange: market.gold21k.priceChange,
       tab: 'gold',
@@ -234,8 +236,8 @@ const DashboardPage = ({ lang = 'bn', setActiveTab }) => {
       code: 'SAR',
       nameBn: 'সৌদি রিয়াল',
       nameEn: 'Saudi Riyal',
-      unitBn: 'মুদ্রা',
-      unitEn: 'Currency',
+      unitBn: 'বিক্রয় হার',
+      unitEn: 'Sell Rate',
       price: `৳ ${market.sar.price.toFixed(2)}`,
       priceChange: market.sar.priceChange,
       tab: 'exchange',
@@ -244,8 +246,8 @@ const DashboardPage = ({ lang = 'bn', setActiveTab }) => {
       code: 'EUR',
       nameBn: 'ইউরো',
       nameEn: 'Euro',
-      unitBn: 'মুদ্রা',
-      unitEn: 'Currency',
+      unitBn: 'বিক্রয় হার',
+      unitEn: 'Sell Rate',
       price: `৳ ${market.eur.price.toFixed(2)}`,
       priceChange: market.eur.priceChange,
       tab: 'exchange',
@@ -254,7 +256,7 @@ const DashboardPage = ({ lang = 'bn', setActiveTab }) => {
       code: 'KG',
       nameBn: 'গরুর মাংস',
       nameEn: 'Beef',
-      unitBn: 'কেজি',
+      unitBn: 'প্রতি কেজি',
       unitEn: 'Per Kg',
       price: `৳ ${market.beef.price.toLocaleString('en-IN')}`,
       priceChange: market.beef.priceChange,
@@ -264,7 +266,7 @@ const DashboardPage = ({ lang = 'bn', setActiveTab }) => {
       code: 'LTR',
       nameBn: 'সয়াবিন তেল',
       nameEn: 'Soybean Oil',
-      unitBn: 'লিটার',
+      unitBn: 'প্রতি লিটার',
       unitEn: 'Per Liter',
       price: `৳ ${market.oil.price.toLocaleString('en-IN')}`,
       priceChange: market.oil.priceChange,
@@ -274,19 +276,19 @@ const DashboardPage = ({ lang = 'bn', setActiveTab }) => {
 
   return (
     <div className="space-y-6">
-      {/* হেডার */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-5 border-b border-slate-200">
+      {/* Section Header */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-blue-600 mb-1">
-            {lang === 'bn' ? 'বাংলাদেশ বাজার মনিটর' : 'Bangladesh Market Monitor'}
-          </p>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-            {lang === 'bn' ? 'আজকের বাজার দর' : "Today's Market Overview"}
+          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-600 mb-1">
+            <span>{lang === 'bn' ? 'বাংলাদেশ বাজার মনিটর' : 'Bangladesh Market Monitor'}</span>
+          </div>
+          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+            {lang === 'bn' ? 'আজকের বাজার দর ও সারসংক্ষেপ' : "Today's Market Overview"}
           </h1>
           <p className="text-sm text-slate-500 mt-1">
             {lang === 'bn'
-              ? 'স্বর্ণ, নিত্যপণ্য ও বৈদেশিক মুদ্রার বাজারদর • দাম বাড়লে বা কমলে স্বয়ংক্রিয়ভাবে আপডেট হবে'
-              : 'Market rates for gold, daily essentials, and currency • Auto-updates on price increase or decrease'}
+              ? 'স্বর্ণ, নিত্যপণ্য ও বৈদেশিক মুদ্রার রিয়েল-টাইম বাজারদর'
+              : 'Real-time market benchmarks for gold, essentials, and foreign exchange'}
           </p>
         </div>
 
@@ -294,19 +296,19 @@ const DashboardPage = ({ lang = 'bn', setActiveTab }) => {
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => setActiveTab('commodities')}
-              className="px-3.5 py-2 rounded-lg bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200 transition-colors"
+              className="px-4 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold border border-slate-200/90 transition-colors"
             >
               {lang === 'bn' ? 'কাঁচাবাজার' : 'Commodities'}
             </button>
             <button
               onClick={() => setActiveTab('gold')}
-              className="px-3.5 py-2 rounded-lg bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200 transition-colors"
+              className="px-4 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold border border-slate-200/90 transition-colors"
             >
               {lang === 'bn' ? 'স্বর্ণের দাম' : 'Gold Price'}
             </button>
             <button
               onClick={() => setActiveTab('exchange')}
-              className="px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition-colors"
+              className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs transition-colors"
             >
               {lang === 'bn' ? 'মুদ্রা বিনিময়' : 'Exchange'}
             </button>
@@ -314,7 +316,7 @@ const DashboardPage = ({ lang = 'bn', setActiveTab }) => {
         )}
       </div>
 
-      {/* KPI কার্ড */}
+      {/* Fintech KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {kpiCards.map((card) => {
           const IconComponent = card.icon;
@@ -322,48 +324,51 @@ const DashboardPage = ({ lang = 'bn', setActiveTab }) => {
             <div
               key={card.id}
               onClick={() => setActiveTab && setActiveTab(card.tab)}
-              className={`group bg-white p-5 rounded-xl border border-slate-200 transition-colors hover:border-blue-600 ${
+              className={`group bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md hover:border-blue-300 transition-all duration-200 ${
                 setActiveTab ? 'cursor-pointer' : ''
               }`}
             >
-              <div className="flex items-center justify-between text-slate-500">
-                <div className="flex items-center gap-2">
-                  <IconComponent size={16} className="text-blue-600" />
-                  <span className="text-xs font-semibold text-slate-600">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className={`p-2 rounded-xl ${card.iconBg}`}>
+                    <IconComponent size={17} />
+                  </div>
+                  <span className="text-xs font-bold text-slate-700">
                     {lang === 'bn' ? card.titleBn : card.titleEn}
                   </span>
                 </div>
                 {setActiveTab && (
                   <ArrowUpRight
-                    size={15}
-                    className="text-slate-400 group-hover:text-blue-600 transition-colors"
+                    size={16}
+                    className="text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
                   />
                 )}
               </div>
 
               <div className="mt-4 flex items-baseline justify-between gap-2">
-                <span className="text-2xl font-bold text-slate-900 tabular-nums tracking-tight">
+                <span className="text-2xl font-extrabold text-slate-900 tabular-nums tracking-tight">
                   {card.price}
                 </span>
 
                 {card.priceChange > 0 ? (
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded bg-blue-600 text-white tabular-nums">
+                  <span className="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-600 border border-rose-200/70 tabular-nums">
                     <TrendingUp size={12} />
                     +৳{card.priceChange.toLocaleString('en-IN')}
                   </span>
                 ) : card.priceChange < 0 ? (
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded bg-slate-900 text-white tabular-nums">
+                  <span className="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/70 tabular-nums">
                     <TrendingDown size={12} />
                     -৳{Math.abs(card.priceChange).toLocaleString('en-IN')}
                   </span>
                 ) : (
-                  <span className="text-[11px] font-medium px-2 py-0.5 rounded bg-slate-100 text-slate-600">
+                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">
+                    <Minus size={11} />
                     {lang === 'bn' ? 'স্থিতিশীল' : 'Stable'}
                   </span>
                 )}
               </div>
 
-              <p className="text-xs text-slate-400 mt-2">
+              <p className="text-xs text-slate-400 mt-2.5 font-medium">
                 {lang === 'bn' ? card.unitBn : card.unitEn}
               </p>
             </div>
@@ -371,50 +376,37 @@ const DashboardPage = ({ lang = 'bn', setActiveTab }) => {
         })}
       </div>
 
-      {/* চার্ট ও তালিকা */}
+      {/* Main Analytics Grid: Trend Chart + Watchlist */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-8 bg-white p-6 rounded-xl border border-slate-200">
+        <div className="lg:col-span-8 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
             <div>
-              <h2 className="text-base font-bold text-slate-900">
-                {lang === 'bn' ? 'সাপ্তাহিক বাজার প্রবণতা' : 'Weekly Rate Trend'}
+              <h2 className="text-base font-extrabold text-slate-900">
+                {lang === 'bn' ? 'সাপ্তাহিক বাজার প্রবণতা' : 'Weekly Rate Analytics'}
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">
                 {lang === 'bn' ? currentChartConfig.labelBn : currentChartConfig.labelEn}
               </p>
             </div>
 
-            <div className="inline-flex items-center bg-slate-100 p-1 rounded-lg self-start">
-              <button
-                onClick={() => setActiveChart('usd')}
-                className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${
-                  activeChart === 'usd'
-                    ? 'bg-white text-slate-900 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                {lang === 'bn' ? 'ডলার (USD)' : 'USD'}
-              </button>
-              <button
-                onClick={() => setActiveChart('gold')}
-                className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${
-                  activeChart === 'gold'
-                    ? 'bg-white text-slate-900 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                {lang === 'bn' ? 'স্বর্ণ (২২কে)' : 'Gold 22K'}
-              </button>
-              <button
-                onClick={() => setActiveChart('rice')}
-                className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${
-                  activeChart === 'rice'
-                    ? 'bg-white text-slate-900 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                {lang === 'bn' ? 'মিনিকেট চাল' : 'Rice'}
-              </button>
+            <div className="inline-flex items-center bg-slate-100 p-1 rounded-xl self-start">
+              {[
+                { key: 'usd', bn: 'ডলার (USD)', en: 'USD' },
+                { key: 'gold', bn: 'স্বর্ণ (২২কে)', en: 'Gold 22K' },
+                { key: 'rice', bn: 'মিনিকেট চাল', en: 'Rice' },
+              ].map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveChart(tab.key)}
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                    activeChart === tab.key
+                      ? 'bg-white text-blue-600 shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  {lang === 'bn' ? tab.bn : tab.en}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -422,8 +414,8 @@ const DashboardPage = ({ lang = 'bn', setActiveTab }) => {
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartSeries} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                 <defs>
-                  <linearGradient id="marketBlueFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#2563EB" stopOpacity={0.14} />
+                  <linearGradient id="fintechBlueGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#2563EB" stopOpacity={0.18} />
                     <stop offset="95%" stopColor="#2563EB" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
@@ -432,14 +424,14 @@ const DashboardPage = ({ lang = 'bn', setActiveTab }) => {
                   dataKey="name"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: '#64748B', fontSize: 12 }}
+                  tick={{ fill: '#64748B', fontSize: 12, fontWeight: 500 }}
                 />
                 <YAxis
                   domain={['auto', 'auto']}
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: '#64748B', fontSize: 12 }}
-                  width={68}
+                  tick={{ fill: '#64748B', fontSize: 12, fontWeight: 500 }}
+                  width={72}
                   tickFormatter={(val) => `৳${val.toLocaleString('en-IN')}`}
                 />
                 <Tooltip
@@ -450,10 +442,11 @@ const DashboardPage = ({ lang = 'bn', setActiveTab }) => {
                   contentStyle={{
                     backgroundColor: '#0F172A',
                     color: '#FFFFFF',
-                    borderRadius: '8px',
-                    border: 'none',
+                    borderRadius: '12px',
+                    border: '1px solid #1E293B',
                     fontSize: '12px',
                     fontWeight: 600,
+                    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
                   }}
                   itemStyle={{ color: '#FFFFFF' }}
                   labelStyle={{ color: '#94A3B8', marginBottom: '2px' }}
@@ -464,23 +457,24 @@ const DashboardPage = ({ lang = 'bn', setActiveTab }) => {
                   stroke="#2563EB"
                   strokeWidth={2.5}
                   fillOpacity={1}
-                  fill="url(#marketBlueFill)"
-                  dot={{ r: 3.5, fill: '#2563EB', strokeWidth: 2, stroke: '#FFFFFF' }}
-                  activeDot={{ r: 5, fill: '#0F172A' }}
+                  fill="url(#fintechBlueGradient)"
+                  dot={{ r: 4, fill: '#2563EB', strokeWidth: 2, stroke: '#FFFFFF' }}
+                  activeDot={{ r: 6, fill: '#0F172A', stroke: '#FFFFFF', strokeWidth: 2 }}
                 />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="lg:col-span-4 bg-white p-6 rounded-xl border border-slate-200 flex flex-col justify-between">
+        {/* Key Market Watchlist */}
+        <div className="lg:col-span-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between pb-3 mb-2 border-b border-slate-100">
-              <h2 className="text-base font-bold text-slate-900">
-                {lang === 'bn' ? 'অন্যান্য বাজারদর' : 'Key Market Rates'}
+            <div className="flex items-center justify-between pb-3.5 mb-2 border-b border-slate-100">
+              <h2 className="text-base font-extrabold text-slate-900">
+                {lang === 'bn' ? 'গুরুত্বপূর্ণ বাজারদর' : 'Key Watchlist'}
               </h2>
-              <span className="text-[11px] font-semibold text-blue-600 uppercase tracking-wide">
-                {lang === 'bn' ? 'আপডেটেড' : 'Updated'}
+              <span className="text-[11px] font-bold text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full">
+                {lang === 'bn' ? 'সর্বশেষ' : 'Latest'}
               </span>
             </div>
 
@@ -491,36 +485,36 @@ const DashboardPage = ({ lang = 'bn', setActiveTab }) => {
                   onClick={() => setActiveTab && setActiveTab(item.tab)}
                   className={`py-3 flex items-center justify-between gap-3 ${
                     setActiveTab
-                      ? 'cursor-pointer hover:bg-slate-50 -mx-2 px-2 rounded-lg transition-colors'
+                      ? 'cursor-pointer hover:bg-slate-50/90 -mx-2.5 px-2.5 rounded-xl transition-colors'
                       : ''
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="w-9 h-7 rounded bg-slate-100 text-slate-700 text-[11px] font-bold flex items-center justify-center shrink-0">
+                    <span className="w-10 h-8 rounded-lg bg-slate-100 border border-slate-200/70 text-slate-700 text-[11px] font-extrabold flex items-center justify-center shrink-0">
                       {item.code}
                     </span>
                     <div>
-                      <p className="text-sm font-semibold text-slate-800">
+                      <p className="text-sm font-bold text-slate-800">
                         {lang === 'bn' ? item.nameBn : item.nameEn}
                       </p>
-                      <p className="text-[11px] text-slate-400">
+                      <p className="text-[11px] text-slate-400 font-medium">
                         {lang === 'bn' ? item.unitBn : item.unitEn}
                       </p>
                     </div>
                   </div>
 
                   <div className="text-right tabular-nums">
-                    <p className="text-sm font-bold text-slate-900">{item.price}</p>
+                    <p className="text-sm font-extrabold text-slate-900">{item.price}</p>
                     {item.priceChange > 0 ? (
-                      <span className="text-[11px] font-semibold text-blue-600">
+                      <span className="text-[11px] font-bold text-rose-600">
                         +৳{item.priceChange.toLocaleString('en-IN')}
                       </span>
                     ) : item.priceChange < 0 ? (
-                      <span className="text-[11px] font-semibold text-slate-900">
+                      <span className="text-[11px] font-bold text-emerald-600">
                         -৳{Math.abs(item.priceChange).toLocaleString('en-IN')}
                       </span>
                     ) : (
-                      <span className="text-[11px] text-slate-400">
+                      <span className="text-[11px] font-medium text-slate-400">
                         {lang === 'bn' ? 'স্থিতিশীল' : 'Stable'}
                       </span>
                     )}
@@ -533,9 +527,9 @@ const DashboardPage = ({ lang = 'bn', setActiveTab }) => {
           {setActiveTab && (
             <button
               onClick={() => setActiveTab('commodities')}
-              className="mt-4 w-full py-2.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-xs font-semibold text-slate-700 border border-slate-200 transition-colors"
+              className="mt-4 w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-bold text-white transition-colors"
             >
-              {lang === 'bn' ? 'সম্পূর্ণ বাজার তালিকা দেখুন →' : 'View Full Market List →'}
+              {lang === 'bn' ? 'সম্পূর্ণ বাজার তালিকা দেখুন →' : 'Explore All Commodities →'}
             </button>
           )}
         </div>

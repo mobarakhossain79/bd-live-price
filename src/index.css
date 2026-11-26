@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  font-family: Inter, sans-serif;
-  line-height: 1.5;
+  font-family: 'Plus Jakarta Sans', 'Baloo Da 2', sans-serif;
+  line-height: 1.6;
   font-weight: 400;
   color: #0f172a;
-  background: #f8fafc;
+  background-color: #f8fafc;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -24,24 +24,46 @@ body,
   height: 100%;
   min-height: 100%;
   margin: 0;
+  font-family: 'Plus Jakarta Sans', 'Baloo Da 2', sans-serif;
 }
 
-body {
-  min-height: 100vh;
-  background: #f8fafc;
+/* Keep Bengali matra (মাত্রা) and conjuncts clean */
+.tracking-tight,
+.tracking-wider {
+  letter-spacing: normal;
 }
 
 button,
 input,
 select,
 textarea {
-  font: inherit;
+  font-family: inherit;
 }
 
+/* Subtle custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Page fade-in animation */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
@@ -50,5 +72,25 @@ textarea {
 }
 
 .animate-fadeIn {
-  animation: fadeIn 0.35s ease-out;
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Seamless Live Market Ticker Animation */
+@keyframes marqueeScroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marqueeScroll 38s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
 }
