@@ -7,11 +7,12 @@ app.use(express.json());
 
 let marketData = {
   gold: {
-    '22k': 197880,
-    '21k': 188900,
-    '18k': 161900,
-    traditional: 134500,
-  },
+  '22k': 197880,
+  '21k': 188900,
+  '18k': 161900,
+  traditional: 134500,
+  international: 1586.46,
+},
   exchange_rates: {
     USD: 122.50,
     EUR: 132.80,

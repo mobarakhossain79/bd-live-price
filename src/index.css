@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  font-family: 'Plus Jakarta Sans', 'Baloo Da 2', sans-serif;
-  line-height: 1.6;
+  font-family: 'Plus Jakarta Sans', 'Noto Serif Bengali', serif;
+  line-height: 1.65;
   font-weight: 400;
   color: #0f172a;
   background-color: #f8fafc;
@@ -24,10 +24,15 @@ body,
   height: 100%;
   min-height: 100%;
   margin: 0;
-  font-family: 'Plus Jakarta Sans', 'Baloo Da 2', sans-serif;
+  font-family: 'Plus Jakarta Sans', 'Noto Serif Bengali', serif;
 }
 
-/* Keep Bengali matra (মাত্রা) and conjuncts clean */
+/* Sidebar dedicated clean UI font */
+.font-sidebar {
+  font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif;
+}
+
+/* বাংলা মাত্রা ও যুক্তবর্ণ নিখুঁত রাখার জন্য */
 .tracking-tight,
 .tracking-wider {
   letter-spacing: normal;
