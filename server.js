@@ -1,5 +1,8 @@
 import express from 'express';
 import cors from 'cors';
+app.get('/', (req, res) => {
+  res.send('✅ আজকের বাজারদর API সার্ভার সফলভাবে চলছে! ডেটা দেখতে /api/overview ভিজিট করুন।');
+});
 
 const app = express();
 app.use(cors());
@@ -38,6 +41,7 @@ app.get('/api/gold-prices', (req, res) => res.json(marketData.gold));
 app.get('/api/exchange-rates', (req, res) => res.json({ rates: marketData.exchange_rates }));
 app.get('/api/commodities', (req, res) => res.json(marketData.commodities));
 
-app.listen(8000, () => {
-  console.log('✅ Server running on http://localhost:8000');
-});
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
+  console.log(`✅ Server running on port ${PORT}`);
+}); 
